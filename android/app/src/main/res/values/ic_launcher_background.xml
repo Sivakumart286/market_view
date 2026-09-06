@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- App Launcher Icon Background -->
     <color name="ic_launcher_background">#FFFFFF</color>
+
+    <!-- Splash Screen Background -->
+    <color name="splash_background">#FFFFFF</color>
+
 </resources>

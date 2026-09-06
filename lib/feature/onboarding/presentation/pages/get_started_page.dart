@@ -4,7 +4,10 @@ import 'package:market_view/core/enum/button_type.dart';
 import 'package:market_view/core/utils/app_colors.dart';
 import 'package:market_view/core/utils/app_font_size.dart';
 import 'package:market_view/core/utils/app_images.dart';
+import 'package:market_view/core/utils/app_preference.dart';
 import 'package:market_view/core/widget/custom_buttons.dart';
+import 'package:market_view/feature/login_screen/auth_binding.dart';
+import 'package:market_view/feature/login_screen/login_screen.dart';
 
 class GetStartedPage extends StatefulWidget {
   const GetStartedPage({super.key});
@@ -18,6 +21,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: AppColors.screenBGColor,
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20),
           child: Column(
@@ -66,6 +70,10 @@ class _GetStartedPageState extends State<GetStartedPage> {
                 buttonHeight: 50,
                 fontSize: AppFontSize.cardTitle,
                 isSufficesIcon: true,
+                onTap: (){
+                  AppPreference().isAlreadyLogin = true;
+                  Get.to(LoginScreen(), binding: AuthBinding());
+                },
                 buttonIcon: Icon(
                   Icons.arrow_forward,
                   size: 20,
