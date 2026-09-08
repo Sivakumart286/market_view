@@ -10,4 +10,10 @@ class AppPreference {
    storage.write("isAlreadyLogin", isAlreadyLogin);
  }
 
+ String? get authToken => storage.read("authToken") ?? "";
+
+ set authToken(String? authToken) {
+   storage.write("authToken", authToken);
+ }
+
 }

@@ -1,13 +1,21 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:market_view/core/utils/app_preference.dart';
-import 'package:market_view/feature/login_screen/login_screen.dart';
-import 'package:market_view/feature/onboarding/presentation/pages/get_started_page.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:market_view/feature/splash/splash.dart';
 import 'core/utils/app_localization.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-void main() {
+
+import 'firebase_options.dart';
+
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MyApp());
 }
 
@@ -16,7 +24,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("value  ${ AppPreference().isAlreadyLogin}");
     return GetMaterialApp(
       locale: LocalizationService.locale,
       defaultTransition: Transition.leftToRight,

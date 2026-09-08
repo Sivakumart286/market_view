@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:market_view/core/constant.dart';
@@ -7,7 +8,9 @@ import 'package:market_view/core/utils/app_images.dart';
 import 'package:market_view/core/widget/custom_buttons.dart';
 import 'package:market_view/core/widget/custom_text.dart';
 import 'package:market_view/core/widget/custom_text_field.dart';
-import 'package:market_view/feature/login_screen/login_controller.dart';
+import 'package:market_view/feature/authentication/presentation/sign_up_screen.dart';
+import 'package:market_view/feature/explore_page/presentation/explore_page.dart';
+import '../controller/login_controller.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,7 +20,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final LoginController controller = Get.find();
+  final LoginController controller = Get.isRegistered<LoginController>()
+      ? Get.find<LoginController>()
+      : Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
@@ -130,11 +135,19 @@ class _LoginScreenState extends State<LoginScreen> {
                       buttonType: CustomButtonType.secondary,
                       buttonHeight: 50,
                       buttonWidth: Get.width * 0.8,
-                      isSufficesIcon: true,
+                      showSuffixIcon: true,
                       buttonIcon: Icon(
                         Icons.arrow_forward,
                         color: AppColors.staticWhite,
                       ),
+                      onTap: (){
+                        controller.loginWithEmail(
+                            email: controller.emailController.text.trim(),
+                            password: controller.passwordController.text.trim()).then((value){
+                          print("===>>>---calling_email ${value?.user}");
+                          Get.off(ExploreScreen());
+                        });
+                      },
                     ),
                     Padding(
                       padding: EdgeInsetsGeometry.symmetric(vertical: 10),
@@ -158,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     CustomButton(
-                      isShowLeadIcon: true,
+                      showLeadingIcon: true,
                       buttonIcon: Image.asset(
                         googleIcon,
                         height: 25,
@@ -168,7 +181,34 @@ class _LoginScreenState extends State<LoginScreen> {
                       buttonType: CustomButtonType.outline,
                       buttonHeight: 50,
                       buttonWidth: Get.width * 0.8,
+                      onTap: (){
+                        controller.signWithGoogle().then((value){
+                          print("===>>>---calling_value ${value?.user}");
+                          Get.off(ExploreScreen());
+                        });
+                      }
                     ),
+                    SizedBox(height: 15),
+                    RichText(text: TextSpan(
+                      children: [
+                      TextSpan(
+                        text: "${"label_sign_up_content".tr} ",
+                        style: TextStyle(
+                          color: AppColors.primaryTextColor
+                        )
+                      ),
+                         TextSpan(
+                           text: "label_sign_up".tr,
+                           style: TextStyle(
+                             color: AppColors.secondaryColor
+                           ),
+                           recognizer: TapGestureRecognizer()
+                             ..onTap = (){
+                             Get.to(() => const SignUpScreen());
+                             }
+                         )
+                      ]
+                    ))
                   ],
                 ),
               ),

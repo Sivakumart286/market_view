@@ -6,8 +6,10 @@ import 'package:market_view/core/utils/app_font_size.dart';
 import 'package:market_view/core/utils/app_images.dart';
 import 'package:market_view/core/utils/app_preference.dart';
 import 'package:market_view/core/widget/custom_buttons.dart';
-import 'package:market_view/feature/login_screen/auth_binding.dart';
-import 'package:market_view/feature/login_screen/login_screen.dart';
+import 'package:market_view/feature/explore_page/presentation/explore_page.dart';
+
+import '../../../authentication/binding/auth_binding.dart';
+import '../../../authentication/presentation/login_screen.dart';
 
 class GetStartedPage extends StatefulWidget {
   const GetStartedPage({super.key});
@@ -17,6 +19,16 @@ class GetStartedPage extends StatefulWidget {
 }
 
 class _GetStartedPageState extends State<GetStartedPage> {
+  @override
+  void initState() {
+    print("auth ${AppPreference().authToken}");
+    if(AppPreference().authToken != ""){
+      Future.delayed(Duration(milliseconds: 2000)).then((value){
+        Get.off(ExploreScreen());
+      });
+    }
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -69,7 +81,8 @@ class _GetStartedPageState extends State<GetStartedPage> {
                 buttonType: CustomButtonType.primary,
                 buttonHeight: 50,
                 fontSize: AppFontSize.cardTitle,
-                isSufficesIcon: true,
+                showSuffixIcon: true,
+                isLoading: AppPreference().authToken!= "",
                 onTap: (){
                   AppPreference().isAlreadyLogin = true;
                   Get.to(LoginScreen(), binding: AuthBinding());

@@ -4,11 +4,12 @@ import 'package:get/get.dart';
 import 'package:market_view/core/constant.dart';
 import 'package:market_view/core/utils/app_colors.dart';
 import 'package:market_view/core/utils/app_preference.dart';
-import 'package:market_view/feature/login_screen/login_screen.dart';
+import 'package:market_view/feature/explore_page/presentation/explore_page.dart';
 import 'package:market_view/feature/onboarding/presentation/pages/get_started_page.dart';
 
 import '../../core/utils/app_images.dart';
-import '../login_screen/auth_binding.dart';
+import '../authentication/binding/auth_binding.dart';
+import '../authentication/presentation/login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -18,13 +19,16 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final AppPreference appPreference = Get.find();
 
   @override
   void initState() {
     Future.delayed(Duration(milliseconds:4000)).then((value){
-      if(!AppPreference().isAlreadyLogin!) {
+      print("=== ${appPreference.isAlreadyLogin}");
+      if(!appPreference.isAlreadyLogin!) {
         Get.off(()=> const GetStartedPage(), binding: AuthBinding());
-        Get.to(GetStartedPage());
+      } else if(appPreference.authToken!.isNotEmpty){
+        Get.off(()=> const ExploreScreen());
       } else {
         Get.off(() => const LoginScreen(),binding: AuthBinding());
       }

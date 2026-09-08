@@ -1,4 +1,4 @@
-package com.marketviewlabs.marketview.market_view
+package com.marketviewlabs.marketview
 
 import io.flutter.embedding.android.FlutterActivity
 

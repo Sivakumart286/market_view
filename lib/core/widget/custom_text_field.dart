@@ -52,7 +52,7 @@ class CustomTextFiled extends GetView {
           decoration: InputDecoration(
             prefixIcon: isPrefix??false ? inputIcon: null,
             suffixIcon: isSuffix??false ? inputIcon: null,
-            hintText: hintText?? "hint_text_label".trParams({"field": title?.toLowerCase()??""})??"",
+            hintText: hintText ?? "hint_text_label".trParams({"field": title?.toLowerCase() ?? ""}),
             hintStyle: TextStyle(
               color: AppColors.hintColor
             ),

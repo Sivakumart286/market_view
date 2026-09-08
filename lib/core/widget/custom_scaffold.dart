@@ -18,6 +18,7 @@ class _CustomScaffoldState extends State<CustomScaffold> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        key: _scaffoldKey,
         body: Builder(builder: (BuildContext ctx){
           return widget.body;
         }),
