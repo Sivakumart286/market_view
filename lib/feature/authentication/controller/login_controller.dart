@@ -4,6 +4,10 @@ import 'package:get/get.dart';
 import 'package:market_view/core/utils/app_preference.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../../core/utils/app_colors.dart';
+import '../../../core/utils/app_font_size.dart';
+import '../../../core/utils/app_images.dart';
+
 
 class LoginController extends GetxController {
   final TextEditingController emailController = TextEditingController();
@@ -21,6 +25,23 @@ class LoginController extends GetxController {
       AppPreference().authToken = userCredential.user?.uid;
       return userCredential;
     } on FirebaseAuthException catch(e){
+      Get.rawSnackbar(
+        backgroundColor: AppColors.staticWhite,
+        message: e.message,
+        messageText: Text(
+          e.message.toString(),
+          style: TextStyle(
+            color: AppColors.primaryTextColor,
+            fontSize: AppFontSize.cardTitle,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        icon: Image.asset(appLogo, height: 24, width: 24),
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 12,
+        duration: const Duration(seconds: 2),
+      );
       throw Exception(e.message);
     }
   }
@@ -30,7 +51,9 @@ class LoginController extends GetxController {
       final GoogleSignInAccount googleUser = await GoogleSignIn.instance.authenticate();
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
       final credential = GoogleAuthProvider.credential(idToken: googleAuth.idToken,);
-      return await _auth.signInWithCredential(credential);
+      final userCredential = await _auth.signInWithCredential(credential);
+      AppPreference().authToken = userCredential.user?.uid;
+      return userCredential;
     } on FirebaseAuthException catch (e) {
       throw Exception(e.toString());
     }

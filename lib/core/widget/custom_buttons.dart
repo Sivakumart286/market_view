@@ -28,6 +28,10 @@ class CustomButton extends GetView {
   final Widget? loaderWidget;
   final Color? loaderColor;
 
+  /// Optional enabled state. Can be an [RxBool] / [Rx<bool>] or a [bool].
+  /// When false, the button displays disabled colors and tap is blocked.
+  final dynamic isEnabled;
+
   const CustomButton({
     super.key,
     this.onTap,
@@ -48,6 +52,7 @@ class CustomButton extends GetView {
     this.isLoading,
     this.loaderWidget,
     this.loaderColor,
+    this.isEnabled,
   });
 
   bool get _isLoadingNow {
@@ -65,6 +70,26 @@ class CustomButton extends GetView {
     }
   }
 
+  bool get _isEnabledNow {
+    if (isEnabled == null) return true;
+    if (isEnabled is Rx<bool>) {
+      return (isEnabled as Rx<bool>).value;
+    }
+    if (isEnabled is bool) {
+      return isEnabled as bool;
+    }
+    try {
+      return (isEnabled as dynamic).value == true;
+    } catch (_) {
+      return true;
+    }
+  }
+
+  bool get _isReactive {
+    return _isReactiveLoader ||
+        (isEnabled is Rx<bool> || isEnabled is RxInterface);
+  }
+
   bool get _isReactiveLoader {
     if (isLoading == null) return false;
     return isLoading is Rx<bool> || isLoading is RxInterface;
@@ -74,7 +99,7 @@ class CustomButton extends GetView {
   bool get _hasSuffixIcon => (showSuffixIcon ?? isSufficesIcon) ?? false;
 
   void _handleTap() {
-    if (_isLoadingNow) return;
+    if (!_isEnabledNow || _isLoadingNow) return;
 
     if (isLoading is Rx<bool>) {
       (isLoading as Rx<bool>).value = true;
@@ -89,7 +114,7 @@ class CustomButton extends GetView {
 
   @override
   Widget build(BuildContext context) {
-    if (_isReactiveLoader) {
+    if (_isReactive) {
       return Obx(() => _buildButton(context));
     }
     return _buildButton(context);
@@ -97,15 +122,16 @@ class CustomButton extends GetView {
 
   Widget _buildButton(BuildContext context) {
     final bool loading = _isLoadingNow;
+    final bool enabled = _isEnabledNow;
 
     return InkWell(
       borderRadius: BorderRadius.circular(30),
-      onTap: loading ? null : _handleTap,
+      onTap: (!enabled || loading) ? null : _handleTap,
       child: Container(
         height: buttonHeight ?? 50,
         width: buttonWidth ?? Get.width * 0.4,
-        decoration: _getDecoration(),
-        child: loading ? _buildLoader() : _buildContent(),
+        decoration: _getDecoration(enabled),
+        child: loading ? _buildLoader() : _buildContent(enabled),
       ),
     );
   }
@@ -126,7 +152,7 @@ class CustomButton extends GetView {
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(bool enabled) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -135,11 +161,17 @@ class CustomButton extends GetView {
             padding: const EdgeInsets.only(right: 10),
             child: buttonIcon!,
           ),
-        CustomText(
-          text: buttonText,
-          fontSize: fontSize,
-          fontWeight: fontWidth ?? AppFontWidth.bold,
-          textColor: buttonContentColor ?? _getTextColor(),
+        Flexible(
+          child: CustomText(
+            text: buttonText,
+            fontSize: fontSize,
+            fontWeight: fontWidth ?? AppFontWidth.bold,
+            textColor: (!enabled
+                ? AppColors.disabledTextColor
+                : (buttonContentColor ?? _getTextColor(enabled))),
+            overflow: TextOverflow.ellipsis,
+            align: TextAlign.center,
+          ),
         ),
         if (_hasSuffixIcon && buttonIcon != null)
           Padding(
@@ -152,7 +184,13 @@ class CustomButton extends GetView {
 
   // Button type based decoration
 
-  BoxDecoration _getDecoration() {
+  BoxDecoration _getDecoration(bool enabled) {
+    if (!enabled) {
+      return BoxDecoration(
+        borderRadius: BorderRadius.circular(30),
+        color: AppColors.disabledButtonColor,
+      );
+    }
     switch (buttonType) {
       case CustomButtonType.primary:
         return BoxDecoration(
@@ -179,7 +217,10 @@ class CustomButton extends GetView {
   }
 
   // Button type based button text color
-  Color _getTextColor() {
+  Color _getTextColor(bool enabled) {
+    if (!enabled) {
+      return AppColors.disabledTextColor;
+    }
     switch (buttonType) {
       case CustomButtonType.primary:
         return AppColors.staticWhite;

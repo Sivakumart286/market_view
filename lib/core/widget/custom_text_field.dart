@@ -16,6 +16,12 @@ class CustomTextFiled extends GetView {
   final Widget? inputIcon;
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmit;
+  final bool readOnly;
+  final bool showVisibilityToggle;
+  final bool isPasswordVisible;
+  final VoidCallback? onVisibilityToggle;
+  final bool enabled;
+
   const CustomTextFiled({
     super.key,
     required this.textEditingController,
@@ -28,7 +34,12 @@ class CustomTextFiled extends GetView {
     this.isSuffix,
     this.inputIcon,
     this.onChanged,
-    this.onSubmit
+    this.onSubmit,
+    this.readOnly = false,
+    this.showVisibilityToggle = false,
+    this.isPasswordVisible = false,
+    this.onVisibilityToggle,
+    this.enabled = true,
   });
 
   @override
@@ -48,10 +59,27 @@ class CustomTextFiled extends GetView {
           controller: textEditingController,
           keyboardType: textInputType?? TextInputType.text,
           focusNode: focusNode,
-          obscureText: isObscureText?? false,
+          obscureText: showVisibilityToggle
+              ? !isPasswordVisible
+              : (isObscureText ?? false),
+          readOnly: readOnly,
+          enabled: enabled,
           decoration: InputDecoration(
             prefixIcon: isPrefix??false ? inputIcon: null,
-            suffixIcon: isSuffix??false ? inputIcon: null,
+            suffixIcon: showVisibilityToggle
+                ? IconButton(
+                    icon: Icon(
+                      isPasswordVisible
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                      color: AppColors.passwordIconColor,
+                    ),
+                    tooltip: isPasswordVisible
+                        ? 'hidePassword'.tr
+                        : 'showPassword'.tr,
+                    onPressed: onVisibilityToggle,
+                  )
+                : (isSuffix ?? false ? inputIcon : null),
             hintText: hintText ?? "hint_text_label".trParams({"field": title?.toLowerCase() ?? ""}),
             hintStyle: TextStyle(
               color: AppColors.hintColor

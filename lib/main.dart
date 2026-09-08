@@ -1,10 +1,14 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:market_view/feature/splash/splash.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:market_view/core/utils/app_preference.dart';
+import 'package:market_view/feature/splash/presentation/splash.dart';
 import 'core/utils/app_localization.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+
+import 'package:flutter/services.dart';
+import 'package:market_view/core/utils/app_colors.dart';
 
 import 'firebase_options.dart';
 
@@ -15,6 +19,10 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  await GetStorage.init();
+  await AppPreference.init();
+  Get.put(AppPreference());
 
   runApp(const MyApp());
 }
@@ -34,8 +42,20 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       translations: LocalizationService(),
-     debugShowCheckedModeBanner: false,
-      home: SplashScreen()
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        scaffoldBackgroundColor: AppColors.screenBGColor,
+        appBarTheme: AppBarTheme(
+          backgroundColor: AppColors.screenBGColor,
+          elevation: 0,
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: AppColors.statusBarBackgroundColor,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+          ),
+        ),
+      ),
+      home: SplashScreen(),
     );
   }
 }

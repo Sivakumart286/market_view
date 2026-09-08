@@ -6,6 +6,7 @@ import 'package:market_view/core/utils/app_font_size.dart';
 import 'package:market_view/core/utils/app_images.dart';
 import 'package:market_view/core/utils/app_preference.dart';
 import 'package:market_view/core/widget/custom_buttons.dart';
+import 'package:market_view/feature/explore_page/binding/explore_binding.dart';
 import 'package:market_view/feature/explore_page/presentation/explore_page.dart';
 
 import '../../../authentication/binding/auth_binding.dart';
@@ -24,7 +25,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
     print("auth ${AppPreference().authToken}");
     if(AppPreference().authToken != ""){
       Future.delayed(Duration(milliseconds: 2000)).then((value){
-        Get.off(ExploreScreen());
+        Get.off(ExploreScreen(),binding: ExploreBinding());
       });
     }
     super.initState();
