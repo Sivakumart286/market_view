@@ -2,8 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:market_view/core/utils/app_preference.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-
 import '../../../core/utils/app_colors.dart';
 import '../../../core/utils/app_font_size.dart';
 import '../../../core/utils/app_images.dart';
@@ -46,18 +44,6 @@ class LoginController extends GetxController {
     }
   }
 
-  Future<UserCredential?> signWithGoogle() async{
-    try{
-      final GoogleSignInAccount googleUser = await GoogleSignIn.instance.authenticate();
-      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
-      final credential = GoogleAuthProvider.credential(idToken: googleAuth.idToken,);
-      final userCredential = await _auth.signInWithCredential(credential);
-      AppPreference().authToken = userCredential.user?.uid;
-      return userCredential;
-    } on FirebaseAuthException catch (e) {
-      throw Exception(e.toString());
-    }
-  }
   Future<String> validateRegistrationForm() async {
     final email = emailController.text.trim();
     final password = passwordController.text;
